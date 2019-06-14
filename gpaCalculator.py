@@ -1,4 +1,5 @@
 # Guick little gpa calculator
+# Parse copy texted file
 courses = []
 with open("transcript.txt", "r") as transcript:
 	lines = transcript.read().splitlines()
@@ -29,54 +30,46 @@ with open("transcript.txt", "r") as transcript:
 	for index in sorted(remove, reverse=True):
 		del courses[index]
 
-
-
+# Print courses
 print("                                      Grade  Units   Units   Grade  Class  Class")
 print("Course      Description               Remark Taken  Passed  Points    Avg   Enrl")
 for line in courses:
 	print(line)
 
+# Extract grades and credit weights
 grades = []
 credits = []
 for i in range(len(courses)):
 	grades.append(courses[i][38:40].strip())
 	credits.append(float(courses[i][55:58].strip()))
-	# print(grades[i] + " " + credits[i])
+
+# Convert to numbers for calculation
+gradeDict = {
+	"CR":4,
+	"A+":4,
+	"A":4,
+	"A-":3.7,
+	"B+":3.3,
+	"B":3,
+	"B-":2.7,
+	"C+":2.3,
+	"C":2,
+	"C-":1.7,
+	"D+":1.3,
+	"D":1,
+	"F":0
+}
 
 for i in range(len(grades)):
-	grade = grades[i]
-	if grade == "A+" or grade == "CR" or grade == "A":
-		grades[i] = 4
-	elif grade == "A-":
-		grades[i] = 3.7
-	elif grade == "B+":
-		grades[i] = 3.3
-	elif grade == "B":
-		grades[i] = 3
-	elif grade == "B-":
-		grades[i] = 2.7
-	elif grade == "C+":
-		grades[i] = 2.3
-	elif grade == "C":
-		grades[i] = 2
-	elif grade == "C-":
-		grades[i] = 1.7
-	elif grade == "D+":
-		grades[i] = 1.3
-	elif grade == "D":
-		grades[i] = 1
-	elif grade == "F":
-		grades[i] = 0
+	grades[i] = gradeDict[grades[i]]
 
-
-# print(grades)
-# print(credits)
-# print(len(grades), len(credits))
+# Get list of multiplied values
 mult = []
 for i in range(len(grades)):
 	mult.append(float(grades[i]*float(credits[i])))
 
-
+# Calculate and print gpa
+# Formula used is sum(grade*weight)/sum(weights)
 gpa = sum(mult)/sum(credits)
 print("\nYour Final Overall GPA is:", gpa)
 
