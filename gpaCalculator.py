@@ -1,5 +1,5 @@
 # Guick little gpa calculator
-# Parse copy texted file
+# Parse copy texted
 courses = []
 with open("transcript.txt", "r") as transcript:
 	lines = transcript.read().splitlines()
