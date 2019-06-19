@@ -1,47 +1,20 @@
 # Guick little gpa calculator
-# Parse copy texted
+# Parse copied text. use: https://regexr.com/ to make the regular expresison
+import re
+
 courses = []
 with open("transcript.txt", "r") as transcript:
 	lines = transcript.read().splitlines()
-	# print(lines)
-	courseFlag = False
 	for line in lines:
-		if line[0:6] == "Course":
-			courseFlag = True
-		if line[0:12] == "Term Average":
+		# https://regexr.com/ is used to edit this regex
+		if re.search(r'[\w\s]{6}\d{3}\s{3}.{26}\w[R\+\-\s]\s{7}\d\.\d\s{5}\d.\d\s{3}[\s\d\.]{5}\s{4}[\dX\.]{3}\s{4}[\d\s]{3}', line):
 			courses.append(line)
-			courseFlag = False
-		if courseFlag:
-			courses.append(line)
-	if courseFlag:
-		for line in reversed(courses):
-			if line[0:12] != "Term Average":
-				courses.pop()
-			else:
-				break
-	remove = []
-	for i in range(len(courses)):
-		if courses[i][0:6] == "Course":
-			remove.append(i)
-		if courses[i][0:12] == "Term Average":
-			remove.append(i)
-		if courses[i][0:12] == "            ":
-			remove.append(i)
-	for index in sorted(remove, reverse=True):
-		del courses[index]
 
 # Print courses
 print("                                      Grade  Units   Units   Grade  Class  Class")
 print("Course      Description               Remark Taken  Passed  Points    Avg   Enrl")
 for line in courses:
 	print(line)
-
-# Extract grades and credit weights
-grades = []
-credits = []
-for i in range(len(courses)):
-	grades.append(courses[i][38:40].strip())
-	credits.append(float(courses[i][55:58].strip()))
 
 # Convert to numbers for calculation
 gradeDict = {
@@ -60,16 +33,20 @@ gradeDict = {
 	"F":0
 }
 
-for i in range(len(grades)):
-	grades[i] = gradeDict[grades[i]]
+# Extract grades and credit weights
+gradeRemark = []
+unitsPassed = []
+# gradePoints = []
+for line in courses:
+	gradeRemark.append(gradeDict[line[38:40].strip()])
+	unitsPassed.append(float(line[55:58].strip()))
+	# gradePoints.append(float(line[61:66].strip()))
 
 # Get list of multiplied values
 mult = []
-for i in range(len(grades)):
-	mult.append(float(grades[i]*float(credits[i])))
+for i in range(len(gradeRemark)):
+	mult.append(float(gradeRemark[i]*float(unitsPassed[i])))
 
-# Calculate and print gpa
 # Formula used is sum(grade*weight)/sum(weights)
-gpa = sum(mult)/sum(credits)
+gpa = sum(mult)/sum(unitsPassed)
 print("\nYour Final Overall GPA is:", gpa)
-
