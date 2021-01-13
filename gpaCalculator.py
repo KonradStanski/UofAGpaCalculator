@@ -34,11 +34,16 @@ gradeDict = {
 }
 
 # Extract grades and credit weights
+print("\n           Letter\nCourse:    Grade: Weight: Remark:")
 gradeRemark = []
 unitsPassed = []
-# gradePoints = []
+
 for line in courses:
-	gradeRemark.append(gradeDict[line[38:40].strip()])
+	letterGrade = line[38:40].strip()
+	if letterGrade == "W":
+		continue
+	print(line[0:10] + " " + letterGrade.ljust(7 , " ") + line[55:58].ljust(8, " ") + str(gradeDict[letterGrade]))
+	gradeRemark.append(gradeDict[letterGrade])
 	unitsPassed.append(float(line[55:58].strip()))
 	# gradePoints.append(float(line[61:66].strip()))
 
